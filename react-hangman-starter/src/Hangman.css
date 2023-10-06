@@ -69,3 +69,7 @@
 #reset:hover {
   background-color: #7b1fa2;
 }
+
+.Hangman input {
+  display:none;
+}

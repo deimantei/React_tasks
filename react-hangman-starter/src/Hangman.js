@@ -23,11 +23,21 @@ class Hangman extends Component {
     this.reset = this.reset.bind(this);
   }
 
+  componentDidMount() {
+    window.addEventListener("keydown", this.handleKeyboardGuess);
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener("keydown", this.handleKeyboardGuess);
+  }
+
   reset(){
     this.setState({
       nWrong:0,
       guessed: new Set(),
-      answer: randomWord()
+      answer: randomWord(),
+      inputValue: "",
+      inputRef: null,
     })
   }
   /** guessedWord: show current-state of word:
@@ -51,9 +61,35 @@ class Hangman extends Component {
     }));
   }
 
+  handleKeyboardGuess = (event) => {
+    const keyPressed = event.key.toLowerCase();
+    
+    // Check if the game is over (6/6 wrong guesses or solved correctly)
+    if (
+      this.state.nWrong >= this.props.maxWrong ||
+      this.guessedWord().join("") === this.state.answer
+    ) {
+      return; // Don't process further keyboard input
+    }
+  
+    if (/^[a-z]$/.test(keyPressed) && !this.state.guessed.has(keyPressed)) {
+      this.setState(
+        (st) => ({
+          guessed: st.guessed.add(keyPressed),
+          nWrong: st.nWrong + (st.answer.includes(keyPressed) ? 0 : 1),
+        }),
+        () => {
+          if (this.inputElement) {
+            this.inputElement.focus(); // Set focus back to the input field if it exists
+          }
+        }
+      );
+    }
+  };
+
   /** generateButtons: return array of letter buttons to render */
   generateButtons() {
-    return "abcdefghijklmnopqrstuvwxyz".split("").map(ltr => (
+    return "abcdefghijklmnopqrstuvwxyz".split("").map((ltr,index) => (
       <button
         key={ltr}
         value={ltr}
@@ -82,6 +118,12 @@ class Hangman extends Component {
         <p className='Hangman-btns'>
         {gameState}</p>
         <button id='reset' onClick={this.reset}>Restart?</button>
+        <input
+        type="text"
+        value={this.state.inputValue}
+        onChange={this.handleInputChange}
+        ref={(input) => (this.inputElement = input)} // Add this line
+        />
         
       </div>
     );
