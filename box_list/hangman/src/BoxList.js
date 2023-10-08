@@ -26,7 +26,7 @@ class BoxList extends Component {
             width={box.width}
             height={box.height}
             color={box.color}
-            removeBox={() => this.remove(box.idn)}
+            removeBox={() => this.remove(box.id)}
             />
         ))
         return(
