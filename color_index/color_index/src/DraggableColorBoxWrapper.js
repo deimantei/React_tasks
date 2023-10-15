@@ -1,31 +1,45 @@
 import React, { useState } from 'react';
 import DraggableColorBox from "./DraggableColorBox";
-import { TextValidator, ValidatorForm } from 'react-material-ui-form-validator';
 import { DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, useSensors } from '@dnd-kit/core';
-import { SortableContext, sortableKeyboardCoordinates, rectSwappingStrategy } from '@dnd-kit/sortable';
+import { SortableContext, sortableKeyboardCoordinates, rectSwappingStrategy, useSortable } from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
+import Box from '@mui/material/Box';
+import './DraggableColorBoxWrapper.css';
 
-function DraggableColorBoxWrapper({ colors, color, name, removeColor }) {
-  const sensors = useSensors(
-    useSensor(PointerSensor),
-    useSensor(KeyboardSensor, {
-      coordinateGetter: sortableKeyboardCoordinates,
-    })
-  );
+function DraggableColorBoxWrapper({ colors, color, name, removeColor, onDragEnd }) {
+  const SortableColor = ({ color }) => {
+    const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id: color.name });
+    const style = {
+      transition,
+      transform: CSS.Transform.toString(transform)
+    };
+    return (
+      <div
+        ref={setNodeRef}
+        style={style}
+        {...attributes}
+        {...listeners}
+      >
+        <DraggableColorBox
+          colors={colors}
+          color={color.color}
+          name={color.name}
+          removeColor={() => removeColor(color.name)}
+          onDragEnd={onDragEnd}
+        />
+      </div>
+    );
+  }
 
   return (
-    <DndContext sensors={sensors} collisionDetection={closestCenter}>
+    <DndContext collisionDetection={closestCenter} onDragEnd={onDragEnd}>
+      
       <SortableContext items={colors.map((color, index) => ({ id: color.name, index }))} strategy={rectSwappingStrategy}>
         {colors.map((color, index) => (
-          <div key={color.name}>
-            <DraggableColorBox
-              index={index}
-              color={color.color}
-              name={color.name}
-              removeColor={() => removeColor(color.name)}
-            />
-          </div>
+          <SortableColor key={color.name} color={color} />
         ))}
       </SortableContext>
+  
     </DndContext>
   );
 }

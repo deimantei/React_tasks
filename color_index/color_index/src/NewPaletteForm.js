@@ -17,6 +17,7 @@ import {ChromePicker} from 'react-color';
 import DraggableColorBoxWrapper from './DraggableColorBoxWrapper';
 import DraggableColorBox from './DraggableColorBox';
 import { TextValidator, ValidatorForm } from 'react-material-ui-form-validator';
+import { arrayMove } from '@dnd-kit/sortable';
 
 
 const drawerWidth = 400;
@@ -129,8 +130,20 @@ function PersistentDrawerLeft(props) {
     setColors(colors.filter(color => color.name !== colorName));
   };
 
-  
-  const handleSubmit = () => {
+  const onDragEnd = (evt) => {
+    const { active, over } = evt;
+    if (active.id === over.id) {
+      return;
+    }
+    setColors((prevColors) => {
+      const oldIndex = prevColors.findIndex((color) => color.name === active.id);
+      const newIndex = prevColors.findIndex((color) => color.name === over.id);
+      return arrayMove(prevColors, oldIndex, newIndex);
+    });
+  };
+
+
+    const handleSubmit = () => {
     const newPalette = {
       id: newPaletteName.toLowerCase().replace(/ /g, "-"),
       colors: colors,
@@ -251,7 +264,7 @@ ValidatorForm.addValidationRule('isPaletteNameUnique', (value) => {
         <Main open={open}>
         <DrawerHeader />
         <div>
-          <DraggableColorBoxWrapper colors={colors} removeColor={removeColor} axis='xy'/>
+          <DraggableColorBoxWrapper colors={colors} removeColor={removeColor} onDragEnd={onDragEnd}/>
         </div>
       </Main>
     </Box>
