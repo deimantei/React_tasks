@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
+import {useHistory} from 'react-router-dom';
 import { styled, useTheme } from '@mui/material/styles';
 import Box from '@mui/material/Box';
-import TextField from '@mui/material/TextField';
 import Drawer from '@mui/material/Drawer';
 import CssBaseline from '@mui/material/CssBaseline';
 import MuiAppBar from '@mui/material/AppBar';
@@ -19,6 +19,8 @@ import { TextValidator, ValidatorForm } from 'react-material-ui-form-validator';
 
 
 const drawerWidth = 400;
+
+
 
 const Main = styled('main', { shouldForwardProp: (prop) => prop !== 'open' })(
   ({ theme, open }) => ({
@@ -74,12 +76,13 @@ class NewPaletteForm extends Component {
   render() {
 
     return (
-      <PersistentDrawerLeft />
+      <PersistentDrawerLeft savePalette={this.props.savePalette} />
     );
   }
 }
 
-function PersistentDrawerLeft() {
+function PersistentDrawerLeft(props) {
+  const history = useHistory();
   const theme = useTheme();
   const [open, setOpen] = React.useState(false);
   const [currentColor, setCurrentColor] = React.useState("pink");
@@ -110,15 +113,29 @@ function PersistentDrawerLeft() {
 
   const handleChange = (evt) => {
     const newName = evt.target.value;
-    const isNameUnique = colors.every(({ name }) => name.toLowerCase() !== newName.toLowerCase());
     setNewName(newName);
-    setRequired(isNameUnique);  
   };
 
+  const handleSubmit = () => {
+    let newName = 'New Test Palette';
+    const newPalette = { paletteName: newName, id: newName.toLowerCase().replace(/ /g, '-'), colors: colors };
+    props.savePalette(newPalette);
+    history.push('/');
+  };
+// Define your custom validation rules here
+ValidatorForm.addValidationRule('isColorNameUnique', (value) => {
+  const isNameUnique = colors.every(({ name }) => name.toLowerCase() !== value.toLowerCase());
+  return isNameUnique;
+});
+
+ValidatorForm.addValidationRule('isColorUnique', () => {
+  const isColorUnique = colors.every(({ color }) => color !== currentColor);
+  return isColorUnique;
+});
   return (
     <Box sx={{ display: 'flex' }}>
       <CssBaseline />
-      <AppBar position="fixed" open={open}>
+      <AppBar position="fixed" open={open} color='default'>
         <Toolbar>
           <IconButton
             color="inherit"
@@ -130,8 +147,9 @@ function PersistentDrawerLeft() {
             <MenuIcon />
           </IconButton>
           <Typography variant="h6" noWrap component="div">
-            Persistent drawer
+           Create A Palette
           </Typography>
+          <Button variant='contained' color='primary' onClick={handleSubmit}>Save Palette</Button>
         </Toolbar>
       </AppBar>
       <Drawer
@@ -167,10 +185,14 @@ function PersistentDrawerLeft() {
          type='TEXT'
          value={newName} 
          onChange={handleChange}
-         validators={required ? ['required', 'IsColorNameUnique'] : []}
-        errorMessages={['This field is required', 'Color name must be unique']}
-        label="Enter palette name"
-        helperText={!required && 'Color name must be unique'}
+         validators={required ? ['required', 'isColorNameUnique', 'isColorUnique'] : []}
+            errorMessages={[
+              'This field is required',
+              'Color name must be unique',
+              'Color must be unique',
+            ]}
+            label="Enter palette name"
+            helperText={!required && 'Color name must be unique'}
          />
         <Button 
         variant='contained' 
