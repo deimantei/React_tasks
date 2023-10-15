@@ -80,6 +80,7 @@ class NewPaletteForm extends Component {
   }
 }
 
+
 function PersistentDrawerLeft(props) {
   const history = useHistory();
   const theme = useTheme();
@@ -123,8 +124,11 @@ function PersistentDrawerLeft(props) {
     setNewPaletteName(newName);
   };
 
+  const removeColor = (colorName) => {
+    setColors(colors.filter(color => color.name !== colorName));
+  };
+
   const handleSubmit = () => {
-    // Create a new palette object
     const newPalette = {
       id: newPaletteName.toLowerCase().replace(/ /g, "-"),
       colors: colors,
@@ -246,7 +250,11 @@ ValidatorForm.addValidationRule('isPaletteNameUnique', (value) => {
         <DrawerHeader />
         <div>
         {colors.map(color => (
-            <DraggableColorBox color={color.color} name={color.name}/>
+            <DraggableColorBox 
+            color={color.color}
+            key={color.name}
+            name={color.name} 
+            removeColor={removeColor}/>
          ))}
         </div>
       </Main>
