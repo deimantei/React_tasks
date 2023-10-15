@@ -71,12 +71,11 @@ const DrawerHeader = styled('div')(({ theme }) => ({
 }));
 
 class NewPaletteForm extends Component {
-  
 
   render() {
 
     return (
-      <PersistentDrawerLeft savePalette={this.props.savePalette} />
+      <PersistentDrawerLeft savePalette={this.props.savePalette}/>
     );
   }
 }
@@ -87,8 +86,11 @@ function PersistentDrawerLeft(props) {
   const [open, setOpen] = React.useState(false);
   const [currentColor, setCurrentColor] = React.useState("pink");
   const [colors, setColors] = React.useState([]);
+  const [palettes] = React.useState([]);
   const [newName, setNewName] = React.useState("");
-  const [required, setRequired] = React.useState(true);
+  const [newPaletteName, setNewPaletteName] = React.useState("");
+  const [required] = React.useState(true);
+  
 
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -116,12 +118,25 @@ function PersistentDrawerLeft(props) {
     setNewName(newName);
   };
 
+  const handlePaletteChange = (evt) => {
+    const newName = evt.target.value;
+    setNewPaletteName(newName);
+  };
+
   const handleSubmit = () => {
-    let newName = 'New Test Palette';
-    const newPalette = { paletteName: newName, id: newName.toLowerCase().replace(/ /g, '-'), colors: colors };
+    // Create a new palette object
+    const newPalette = {
+      id: newPaletteName.toLowerCase().replace(/ /g, "-"),
+      colors: colors,
+    };
+  
+    // Call the savePalette function from props
     props.savePalette(newPalette);
+  
+    // Redirect to the desired route
     history.push('/');
   };
+  
 // Define your custom validation rules here
 ValidatorForm.addValidationRule('isColorNameUnique', (value) => {
   const isNameUnique = colors.every(({ name }) => name.toLowerCase() !== value.toLowerCase());
@@ -132,6 +147,12 @@ ValidatorForm.addValidationRule('isColorUnique', () => {
   const isColorUnique = colors.every(({ color }) => color !== currentColor);
   return isColorUnique;
 });
+
+ValidatorForm.addValidationRule('isPaletteNameUnique', (value) => {
+  const isPaletteNameUnique = palettes.every(({ paletteName }) => paletteName.toLowerCase() !== value.toLowerCase());
+  return isPaletteNameUnique;
+});
+
   return (
     <Box sx={{ display: 'flex' }}>
       <CssBaseline />
@@ -149,7 +170,25 @@ ValidatorForm.addValidationRule('isColorUnique', () => {
           <Typography variant="h6" noWrap component="div">
            Create A Palette
           </Typography>
-          <Button variant='contained' color='primary' onClick={handleSubmit}>Save Palette</Button>
+          <ValidatorForm onSubmit={handleSubmit}>
+          <TextValidator
+                label='Palette Name'
+                value={newPaletteName}
+                name='newPaletteName'
+                onChange={handlePaletteChange}
+                fullWidth
+                margin='normal'
+                validators={["required", "isPaletteNameUnique"]}
+                errorMessages={["Enter Palette Name", "Name already used"]}
+              />
+          <Button 
+          variant='contained' 
+          color='primary'
+          type='submit' 
+          >
+            Save Palette
+          </Button>
+          </ValidatorForm>
         </Toolbar>
       </AppBar>
       <Drawer
@@ -191,7 +230,7 @@ ValidatorForm.addValidationRule('isColorUnique', () => {
               'Color name must be unique',
               'Color must be unique',
             ]}
-            label="Enter palette name"
+            label="Enter color name"
             helperText={!required && 'Color name must be unique'}
          />
         <Button 
