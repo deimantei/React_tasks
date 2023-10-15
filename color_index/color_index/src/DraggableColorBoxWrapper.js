@@ -24,7 +24,7 @@ function DraggableColorBoxWrapper({ colors, color, name, removeColor, onDragEnd 
           colors={colors}
           color={color.color}
           name={color.name}
-          removeColor={() => removeColor(color.name)}
+          removeColor={removeColor}
           onDragEnd={onDragEnd}
         />
       </div>

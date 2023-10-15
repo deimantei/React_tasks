@@ -11,7 +11,7 @@ class PaletteList extends Component {
     render() {
         const {palettes} = this.props;
         return(
-            <div className='PaletteList-root' style={{backgroundImage: `url(${bg})`}}>
+            <div className='PaletteList-root' style={{backgroundImage: `url(${bg})`, height: '130vh'}}>
                 <div className='PaletteList-container'>
                     <nav className='PaletteList-nav'>
                         <h1>React Colors</h1>

@@ -6,10 +6,12 @@ import { SortableContext, rectSortingStrategy } from '@dnd-kit/sortable';
 
 export default function DraggableColorBox(props) {
     const {removeColor, name, color, colors, onDragEnd} = props;
-    const handleRemoveColor = () => {
-        removeColor(name);
-      };
+    //const handleRemoveColor = () => {
+    //    props.removeColor(name);
+    //  };
+
         return(
+            
         <DndContext collisionDetection={closestCenter} onDragEnd={onDragEnd}>
             <div className='hello'>
             <SortableContext items={colors} strategy={rectSortingStrategy}>
@@ -17,7 +19,7 @@ export default function DraggableColorBox(props) {
             <div className='Draggable-root' style={{backgroundColor: color, height: "calc(40vh - 64px)"}}>
             <div className='Draggable-boxcontent'>
                 <span>{name}</span>
-                <DeleteForeverSharpIcon className='delete-icon' onClick={handleRemoveColor}/>
+                <DeleteForeverSharpIcon className='delete-icon' onClick={() => removeColor(name)}/>
             </div>
             <div>
                  {color.name}

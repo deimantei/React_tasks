@@ -1,8 +1,8 @@
 .PaletteList-root {
-    height: 100vh;
     display: flex;
     align-items: flex-start;
     justify-content: center;
+    height: 100vh;
   }
   .PaletteList-root:hover {
     cursor: pointer;
