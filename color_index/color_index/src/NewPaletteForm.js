@@ -14,6 +14,7 @@ import MenuIcon from '@mui/icons-material/Menu';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import {ChromePicker} from 'react-color';
+import DraggableColorBoxWrapper from './DraggableColorBoxWrapper';
 import DraggableColorBox from './DraggableColorBox';
 import { TextValidator, ValidatorForm } from 'react-material-ui-form-validator';
 
@@ -128,6 +129,7 @@ function PersistentDrawerLeft(props) {
     setColors(colors.filter(color => color.name !== colorName));
   };
 
+  
   const handleSubmit = () => {
     const newPalette = {
       id: newPaletteName.toLowerCase().replace(/ /g, "-"),
@@ -249,13 +251,7 @@ ValidatorForm.addValidationRule('isPaletteNameUnique', (value) => {
         <Main open={open}>
         <DrawerHeader />
         <div>
-        {colors.map(color => (
-            <DraggableColorBox 
-            color={color.color}
-            key={color.name}
-            name={color.name} 
-            removeColor={removeColor}/>
-         ))}
+          <DraggableColorBoxWrapper colors={colors} removeColor={removeColor} axis='xy'/>
         </div>
       </Main>
     </Box>
