@@ -3,11 +3,11 @@ import DraggableColorBox from "./DraggableColorBox";
 import { DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, useSensors } from '@dnd-kit/core';
 import { SortableContext, sortableKeyboardCoordinates, rectSwappingStrategy, useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import Box from '@mui/material/Box';
 import './DraggableColorBoxWrapper.css';
 
 function DraggableColorBoxWrapper({ colors, color, name, removeColor, onDragEnd }) {
   const SortableColor = ({ color }) => {
+    
     const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id: color.name });
     const style = {
       transition,
@@ -30,7 +30,7 @@ function DraggableColorBoxWrapper({ colors, color, name, removeColor, onDragEnd 
       </div>
     );
   }
-
+  console.log('Colors Array:', colors);
   return (
     <DndContext collisionDetection={closestCenter} onDragEnd={onDragEnd}>
       

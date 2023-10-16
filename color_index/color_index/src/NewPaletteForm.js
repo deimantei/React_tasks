@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import {useHistory} from 'react-router-dom';
+import {useHistory, Link} from 'react-router-dom';
 import { styled, useTheme } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import Drawer from '@mui/material/Drawer';
@@ -18,6 +18,8 @@ import DraggableColorBoxWrapper from './DraggableColorBoxWrapper';
 import DraggableColorBox from './DraggableColorBox';
 import { TextValidator, ValidatorForm } from 'react-material-ui-form-validator';
 import { arrayMove } from '@dnd-kit/sortable';
+import seedColors from "./seedColors";
+import './NewPaletteForm.css'
 
 
 const drawerWidth = 400;
@@ -51,6 +53,8 @@ const AppBar = styled(MuiAppBar, {
       easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.leavingScreen,
     }),
+    flexDirection: 'row',
+    justifyContent: 'space-between',
     ...(open && {
       width: `calc(100% - ${drawerWidth}px)`,
       
@@ -69,7 +73,6 @@ const DrawerHeader = styled('div')(({ theme }) => ({
   padding: theme.spacing(0, 1),
   // necessary for content to be below app bar
   ...theme.mixins.toolbar,
-  justifyContent: 'flex-end',
 }));
 
 class NewPaletteForm extends Component {
@@ -105,14 +108,14 @@ function PersistentDrawerLeft(props) {
 
   const updateCurrentColor = (newColor) => {
     console.log(newColor.hex);
-    setCurrentColor(newColor.hex); 
+   setCurrentColor(newColor.hex); 
   }
 
   const addNewColor = () => {
     if (required) {
       const newColor = { color: currentColor, name: newName };
       setColors([...colors, newColor]);
-      setNewName(''); // Clear the input field after adding
+      setNewName('');
     }
   }
 
@@ -141,8 +144,26 @@ function PersistentDrawerLeft(props) {
       return arrayMove(prevColors, oldIndex, newIndex);
     });
   };
+  const clearColors = () => {
+    setColors([]);
+  };
 
+  const addRandomColor = () => {
+    const allColors = palettes.map((p) => p.colors).flat();
+    const rand = Math.floor(Math.random() * allColors.length);
+    const randomColor = allColors[rand];
+  
+    if (randomColor && randomColor.name) {
+      // Make sure 'name' is present in 'randomColor'
+      setColors([...colors, randomColor]);
+    } else {
+      console.log('failed')
+      console.log(randomColor);
+      console.log(allColors)
+    }
+};
 
+  
     const handleSubmit = () => {
     const newPalette = {
       id: newPaletteName.toLowerCase().replace(/ /g, "-"),
@@ -173,7 +194,7 @@ ValidatorForm.addValidationRule('isPaletteNameUnique', (value) => {
 });
 
   return (
-    <Box sx={{ display: 'flex' }}>
+    <Box className='root' sx={{ display: 'flex' }}>
       <CssBaseline />
       <AppBar position="fixed" open={open} color='default'>
         <Toolbar>
@@ -189,6 +210,9 @@ ValidatorForm.addValidationRule('isPaletteNameUnique', (value) => {
           <Typography variant="h6" noWrap component="div">
            Create A Palette
           </Typography>
+          
+        </Toolbar>
+        <div className='navbuttons'>
           <ValidatorForm onSubmit={handleSubmit}>
           <TextValidator
                 label='Palette Name'
@@ -208,7 +232,15 @@ ValidatorForm.addValidationRule('isPaletteNameUnique', (value) => {
             Save Palette
           </Button>
           </ValidatorForm>
-        </Toolbar>
+          
+          <Link to='/'>
+            <Button
+            variant='contained'
+            color='secondary'>
+              Go back
+              </Button>
+            </Link>
+            </div>
       </AppBar>
       <Drawer
         sx={{
@@ -229,18 +261,37 @@ ValidatorForm.addValidationRule('isPaletteNameUnique', (value) => {
           </IconButton>
         </DrawerHeader>
         <Divider />
-        <Typography variant='h4'>Design your palette</Typography>
-        <div>
-        <Button variant='contained' color='secondary'>Clear Palette</Button>
-        <Button variant='contained' color='primary'>Random Color</Button>
+        <div className='container'>
+        <Typography variant='h4' gutterBottom>Design your palette</Typography>
+        
+        <div className='buttons'>
+        <Button variant='contained'
+        className='button' 
+        color='secondary'
+        onClick={clearColors}>
+          Clear Palette
+          </Button>
+        <Button 
+        className='button' 
+        variant='contained' 
+        color='primary'
+        onClick={addRandomColor}>
+          Random Color
+          </Button>
         </div>
+
         <ChromePicker
+        className='picker'
         color={currentColor}
         onChangeComplete={updateCurrentColor}
         />
+        <Divider />
         <ValidatorForm onSubmit={addNewColor}>
         <TextValidator
          type='TEXT'
+         className='colorNameInput'
+         variant='filled'
+         margin='normal'
          value={newName} 
          onChange={handleChange}
          validators={required ? ['required', 'isColorNameUnique', 'isColorUnique'] : []}
@@ -253,13 +304,15 @@ ValidatorForm.addValidationRule('isPaletteNameUnique', (value) => {
             helperText={!required && 'Color name must be unique'}
          />
         <Button 
-        variant='contained' 
+        variant='contained'
+        className='addColor' 
         color='primary' 
         type='submit'
         style={{background: currentColor}}
        >Add Color</Button>
         </ValidatorForm>
-        <Divider />
+        
+        </div>
         </Drawer>
         <Main open={open}>
         <DrawerHeader />
