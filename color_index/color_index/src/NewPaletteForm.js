@@ -20,6 +20,7 @@ import { TextValidator, ValidatorForm } from 'react-material-ui-form-validator';
 import { arrayMove } from '@dnd-kit/sortable';
 import seedColors from "./seedColors";
 import './NewPaletteForm.css'
+import PaletteMetaForm from './PaletteMetaForm';
 
 
 const drawerWidth = 400;
@@ -80,7 +81,7 @@ class NewPaletteForm extends Component {
   render() {
 
     return (
-      <PersistentDrawerLeft savePalette={this.props.savePalette}/>
+      <PersistentDrawerLeft savePalette={this.props.savePalette} palettes={this.props.palettes}/>
     );
   }
 }
@@ -92,9 +93,9 @@ function PersistentDrawerLeft(props) {
   const [open, setOpen] = React.useState(false);
   const [currentColor, setCurrentColor] = React.useState("pink");
   const [colors, setColors] = React.useState([]);
-  const [palettes] = React.useState([]);
+  //const [setNewPaletteName] = React.useState("");
+  const [formShowing, setFormShowing] = React.useState(false);
   const [newName, setNewName] = React.useState("");
-  const [newPaletteName, setNewPaletteName] = React.useState("");
   const [required] = React.useState(true);
   
 
@@ -124,9 +125,8 @@ function PersistentDrawerLeft(props) {
     setNewName(newName);
   };
 
-  const handlePaletteChange = (evt) => {
-    const newName = evt.target.value;
-    setNewPaletteName(newName);
+  const showForm = () => {
+    setFormShowing(true);
   };
 
   const removeColor = (colorName) => {
@@ -148,7 +148,7 @@ function PersistentDrawerLeft(props) {
     setColors([]);
   };
 
-  const addRandomColor = () => {
+  const addRandomColor = (palettes) => {
     const allColors = palettes.map((p) => p.colors).flat();
     const rand = Math.floor(Math.random() * allColors.length);
     const randomColor = allColors[rand];
@@ -158,21 +158,22 @@ function PersistentDrawerLeft(props) {
       setColors([...colors, randomColor]);
     } else {
       console.log('failed')
-      console.log(randomColor);
-      console.log(allColors)
+      console.log({randomColor});
+      console.log({rand});
+      console.log('length of all colors', allColors.length);
     }
 };
 
   
-    const handleSubmit = () => {
+    const handleSubmit = (newPaletteName) => {
     const newPalette = {
       id: newPaletteName.toLowerCase().replace(/ /g, "-"),
       colors: colors,
     };
-  
+    console.log({newPaletteName});
+    console.log('id:', newPalette.id);
     // Call the savePalette function from props
     props.savePalette(newPalette);
-  
     // Redirect to the desired route
     history.push('/');
   };
@@ -188,10 +189,6 @@ ValidatorForm.addValidationRule('isColorUnique', () => {
   return isColorUnique;
 });
 
-ValidatorForm.addValidationRule('isPaletteNameUnique', (value) => {
-  const isPaletteNameUnique = palettes.every(({ paletteName }) => paletteName.toLowerCase() !== value.toLowerCase());
-  return isPaletteNameUnique;
-});
 
   return (
     <Box className='root' sx={{ display: 'flex' }}>
@@ -213,25 +210,6 @@ ValidatorForm.addValidationRule('isPaletteNameUnique', (value) => {
           
         </Toolbar>
         <div className='navbuttons'>
-          <ValidatorForm onSubmit={handleSubmit}>
-          <TextValidator
-                label='Palette Name'
-                value={newPaletteName}
-                name='newPaletteName'
-                onChange={handlePaletteChange}
-                fullWidth
-                margin='normal'
-                validators={["required", "isPaletteNameUnique"]}
-                errorMessages={["Enter Palette Name", "Name already used"]}
-              />
-          <Button 
-          variant='contained' 
-          color='primary'
-          type='submit' 
-          >
-            Save Palette
-          </Button>
-          </ValidatorForm>
           
           <Link to='/'>
             <Button
@@ -240,8 +218,12 @@ ValidatorForm.addValidationRule('isPaletteNameUnique', (value) => {
               Go back
               </Button>
             </Link>
+            <Button variant="contained" onClick={showForm}>
+            Create A Palette
+            </Button>
             </div>
       </AppBar>
+      {formShowing && <PaletteMetaForm palettes={props.palettes} handleSubmit={handleSubmit}/>}
       <Drawer
         sx={{
           width: drawerWidth,
@@ -275,7 +257,7 @@ ValidatorForm.addValidationRule('isPaletteNameUnique', (value) => {
         className='button' 
         variant='contained' 
         color='primary'
-        onClick={addRandomColor}>
+        onClick={() => addRandomColor(props.palettes)}>
           Random Color
           </Button>
         </div>
@@ -311,7 +293,6 @@ ValidatorForm.addValidationRule('isPaletteNameUnique', (value) => {
         style={{background: currentColor}}
        >Add Color</Button>
         </ValidatorForm>
-        
         </div>
         </Drawer>
         <Main open={open}>

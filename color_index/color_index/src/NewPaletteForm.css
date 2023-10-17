@@ -23,7 +23,11 @@ height: 100%;
 }
 
 .buttons {
-    width: 100;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
 }
 .buttton {
     width: 50%;

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import DraggableColorBox from "./DraggableColorBox";
 import { DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, useSensors } from '@dnd-kit/core';
-import { SortableContext, sortableKeyboardCoordinates, rectSwappingStrategy, useSortable } from '@dnd-kit/sortable';
+import { SortableContext, sortableKeyboardCoordinates, rectSwappingStrategy, useSortable, arraySwap } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import './DraggableColorBoxWrapper.css';
 
@@ -34,8 +34,8 @@ function DraggableColorBoxWrapper({ colors, color, name, removeColor, onDragEnd 
   return (
     <DndContext collisionDetection={closestCenter} onDragEnd={onDragEnd}>
       
-      <SortableContext items={colors.map((color, index) => ({ id: color.name, index }))} strategy={rectSwappingStrategy}>
-        {colors.map((color, index) => (
+      <SortableContext items={colors.map((color) => color.id)} strategy={rectSwappingStrategy} style={{display:'grid'}}>
+        {colors.map((color) => (
           <SortableColor key={color.name} color={color} />
         ))}
       </SortableContext>
