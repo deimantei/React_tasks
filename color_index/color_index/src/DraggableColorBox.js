@@ -13,7 +13,7 @@ export default function DraggableColorBox(props) {
         return(
             
         <DndContext collisionDetection={closestCenter} onDragEnd={onDragEnd}>
-            <div>
+            
             <SortableContext items={colors} strategy={rectSortingStrategy}>
 
             <div className='Draggable-root' style={{backgroundColor: color, height: "calc(40vh - 64px)"}}>
@@ -28,7 +28,7 @@ export default function DraggableColorBox(props) {
             </div>
 
         </SortableContext>
-        </div>
+        
         </DndContext>
     )
 }
