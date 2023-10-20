@@ -1,8 +1,10 @@
-import React from 'react';
+import React, {useContext} from 'react';
+import { TodosContext } from './contexts/todoscontext';
 import TextField from '@mui/material/TextField';
 import useInputState from './hooks/useInputState';
 
-function EditTodoForm({editTodo, toggleEditForm, task, id}) {
+function EditTodoForm({toggleEditForm, task, id}) {
+    const {editTodo} = useContext(TodosContext);
     const [value, handleChange, reset] = useInputState(task);
     return(
         <form onSubmit={(e) => {
