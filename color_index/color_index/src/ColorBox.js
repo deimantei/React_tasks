@@ -1,47 +1,50 @@
-import React, {Component} from 'react';
-import { CopyToClipboard } from 'react-copy-to-clipboard';
-import { Link } from 'react-router-dom';
+import React, {useState, useEffect} from 'react';
+import {CopyToClipboard} from 'react-copy-to-clipboard';
+import {Link} from 'react-router-dom';
 import chroma from 'chroma-js';
 import './ColorBox.css';
 
-class ColorBox extends Component {
-    constructor(props){
-        super(props);
-        this.state = {copied: false};
-        this.changeCopyState = this.changeCopyState.bind(this);
+const ColorBox = ({name, background, moreUrl, showLink}) => {
+    const [copied, setCopied] = useState(false);
+
+    const changeCopyState = () => {
+        // TODO since this function is so short and only has 1 usage, we could even inline it.
+        //     Then the line that uses it would look something like this:
+        //     <CopyToClipboard text={background} onCopy={() => setCopied(true)}>
+        setCopied(true);
     }
-    changeCopyState(){
-        this.setState({copied: true}, () => {
-            setTimeout(()=> this.setState({copied:false}),1500);
-        })
-    }
-    render() {
-        const {name, background, moreUrl, showLink} = this.props;
-        const {copied} = this.state;
-        const isDarkColor = chroma(background).luminance() <= 0.08;
-        const isLightColor = chroma(background).luminance() >= 0.7;
-        return(
-            <CopyToClipboard text={background} onCopy={this.changeCopyState}>
+
+    useEffect(() => {
+        // TODO might not work since it changes the very state variable that the useEffect is watching
+        //     but the if-clause should counter that
+        if (copied) {
+            setTimeout(() => setCopied(false), 1500);
+        }
+    }, [copied]);
+
+    const isDarkColor = chroma(background).luminance() <= 0.08;
+    const isLightColor = chroma(background).luminance() >= 0.7;
+    return (
+        <CopyToClipboard text={background} onCopy={changeCopyState}>
             <div className='ColorBox' style={{background}}>
                 <div className={`copy-overlay ${copied && 'show'}`} style={{background}}/>
-                <div className={`copy-msg ${copied && 'show'}`} >
+                <div className={`copy-msg ${copied && 'show'}`}>
                     <h1>copied!</h1>
-                    <p className={`${isLightColor && 'dark-text'}`}>{this.props.background}</p>
+                    <p className={`${isLightColor && 'dark-text'}`}>{props.background}</p>
                 </div>
                 <div className='copy-container'>
                     <div className='box-content'>
                         <span className={isDarkColor && "light-text"}>{name} </span>
                     </div>
-                    <button className={`copy-button ${isLightColor && 'dark-text'}`}> copy </button>
+                    <button className={`copy-button ${isLightColor && 'dark-text'}`}> copy</button>
                 </div>
                 {showLink && (
-                <Link to={moreUrl} onClick={evt => evt.stopPropagation()}>
-                   <span className={`see-more ${isLightColor && 'dark-text'}`}> more </span>
-                </Link>)}
+                    <Link to={moreUrl} onClick={evt => evt.stopPropagation()}>
+                        <span className={`see-more ${isLightColor && 'dark-text'}`}> more </span>
+                    </Link>)}
             </div>
-            </CopyToClipboard>
-        )
-    }
+        </CopyToClipboard>
+    )
 }
 
 export default ColorBox;

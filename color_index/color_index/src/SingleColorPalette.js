@@ -5,17 +5,17 @@ import PaletteFooter from './PaletteFooter';
 import {Link} from 'react-router-dom';
 
 class SingleColorPalette extends Component {
-    constructor(props){
+    constructor(props) {
         super(props);
         this._shades = this.gatherShades(this.props.palette, this.props.colorId);
-        this.state = {format: "hex" };
+        this.state = {format: "hex"};
         this.changeFormat = this.changeFormat.bind(this);
-        }
+    }
 
-    gatherShades(palette, colorToFilterBy){
+    gatherShades(palette, colorToFilterBy) {
         let shades = [];
         let allColors = palette.colors;
-        for(let key in allColors){
+        for (let key in allColors) {
             shades = shades.concat(
                 allColors[key].filter(color => color.id === colorToFilterBy)
             );
@@ -24,27 +24,27 @@ class SingleColorPalette extends Component {
         return shades.slice(1);
     }
 
-    changeFormat(val){
-        this.setState({format:val});
+    changeFormat(val) {
+        this.setState({format: val});
     }
 
     render() {
         const {format} = this.state;
         const {paletteName, emoji, id} = this.props.palette;
-        const colorBoxes = this._shades.map( color => (
-            <ColorBox key={color.name} 
-            name={color.name} 
-            background={color[format]} 
-            showLink={false}/>
+        const colorBoxes = this._shades.map(color => (
+            <ColorBox key={color.name}
+                      name={color.name}
+                      background={color[format]}
+                      showLink={false}/>
         ))
-        return(
+        return (
             <div className='SingleColorPalette Palette'>
                 <Navbar handleChange={this.changeFormat} showingAllColors={false}/>
                 <div className='Palette-colors'>
                     {colorBoxes}
                     <div className='go-back ColorBox'>
                         <Link to={`/palette/${id}`} className='back-button'>Go back</Link>
-                        </div>
+                    </div>
                 </div>
                 <PaletteFooter paletteName={paletteName} emoji={emoji}/>
             </div>
