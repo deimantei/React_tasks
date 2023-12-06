@@ -1,4 +1,4 @@
-.menubuttons{
+.menubuttons {
 
 
 }
@@ -10,16 +10,16 @@
 }
 
 .root {
-display: flex;
+    display: flex;
 }
 
 .container {
-width: 90%;
-display: flex;
-flex-direction: column;
-justify-content: center;
-align-items: center;
-height: 100%;
+    width: 90%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
 }
 
 .buttons {
@@ -29,6 +29,7 @@ height: 100%;
     align-items: center;
 
 }
+
 .buttton {
     width: 50%;
 }
@@ -41,19 +42,19 @@ height: 100%;
 }
 
 .addColor {
-width: 100%;
-padding: 1rem;
-margin-top: 1rem;
-font-size: 2rem;
+    width: 100%;
+    padding: 1rem;
+    margin-top: 1rem;
+    font-size: 2rem;
 }
 
-.colorNameInput{
+.colorNameInput {
     width: 100%;
     height: 70px;
 
 }
 
-DrawerHeader{
+DrawerHeader {
     align-items: center;
     display: flex;
 }

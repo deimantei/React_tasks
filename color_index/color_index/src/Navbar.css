@@ -4,6 +4,7 @@
     justify-content: flex-start;
     height: 6vh;
 }
+
 .logo {
     margin-right: 15px;
     padding: 0 13px;
@@ -15,7 +16,7 @@
     align-items: center;
 }
 
-.logo a{
+.logo a {
     text-decoration: none;
     color: black;
 }
@@ -24,6 +25,7 @@
     margin-left: auto;
     margin-right: 1rem;
 }
+
 .slider {
     width: 340px;
     margin: 0 10px;
